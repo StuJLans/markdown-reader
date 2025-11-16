@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { MarkdownViewer } from './components/MarkdownViewer';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -12,6 +12,15 @@ function App() {
   const [isDarkMode, toggleDarkMode] = useDarkMode();
 
   const selectedDocument = documents.find((doc) => doc.id === selectedDocId) || null;
+
+  // Update page title based on selected document
+  useEffect(() => {
+    if (selectedDocument) {
+      document.title = `${selectedDocument.name} - Markdown Reader`;
+    } else {
+      document.title = 'Markdown Reader';
+    }
+  }, [selectedDocument]);
 
   const handleFileUpload = (name: string, content: string) => {
     const newDoc: MarkdownDocument = {

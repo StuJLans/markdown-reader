@@ -1,14 +1,27 @@
+import { useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import { MarkdownDocument } from '../types';
+import { ScrollControls } from './ScrollControls';
+import { TableOfContents } from './TableOfContents';
 
 interface MarkdownViewerProps {
   document: MarkdownDocument | null;
 }
 
 export function MarkdownViewer({ document }: MarkdownViewerProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const generateId = (text: string | React.ReactNode): string => {
+    const textContent = typeof text === 'string' ? text : String(text);
+    return textContent
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
+
   if (!document) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -40,25 +53,26 @@ export function MarkdownViewer({ document }: MarkdownViewerProps) {
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="max-w-4xl mx-auto px-8 py-12">
-        <article className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-a:text-blue-500 prose-a:no-underline hover:prose-a:underline prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-img:rounded-lg prose-img:shadow-lg max-w-none">
+    <>
+      <div ref={scrollContainerRef} className="h-full overflow-y-auto">
+        <div className="max-w-4xl mx-auto px-8 py-12">
+          <article className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-a:text-blue-500 prose-a:no-underline hover:prose-a:underline prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-img:rounded-lg prose-img:shadow-lg max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}
             components={{
               h1: ({ children, ...props }) => (
-                <h1 className="text-5xl font-extrabold mb-6 mt-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent" {...props}>
+                <h1 id={generateId(children)} className="text-5xl font-extrabold mb-6 mt-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent" {...props}>
                   {children}
                 </h1>
               ),
               h2: ({ children, ...props }) => (
-                <h2 className="text-4xl font-bold mb-4 mt-8 text-gray-900 dark:text-gray-50" {...props}>
+                <h2 id={generateId(children)} className="text-4xl font-bold mb-4 mt-8 text-gray-900 dark:text-gray-50" {...props}>
                   {children}
                 </h2>
               ),
               h3: ({ children, ...props }) => (
-                <h3 className="text-3xl font-bold mb-3 mt-6 text-gray-800 dark:text-gray-100" {...props}>
+                <h3 id={generateId(children)} className="text-3xl font-bold mb-3 mt-6 text-gray-800 dark:text-gray-100" {...props}>
                   {children}
                 </h3>
               ),
@@ -111,12 +125,20 @@ export function MarkdownViewer({ document }: MarkdownViewerProps) {
                   {children}
                 </td>
               ),
+              a: ({ children, ...props }) => (
+                <a {...props} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
             }}
           >
             {document.content}
           </ReactMarkdown>
-        </article>
+          </article>
+        </div>
       </div>
-    </div>
+      <ScrollControls scrollContainerRef={scrollContainerRef} />
+      <TableOfContents content={document.content} scrollContainerRef={scrollContainerRef} />
+    </>
   );
 }
