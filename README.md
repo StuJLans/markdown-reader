@@ -89,7 +89,7 @@ A sample markdown file (`SAMPLE.md`) is included in the project root. You can up
 
 ## License
 
-ISC
+MIT
 
 ## Contributing
 
