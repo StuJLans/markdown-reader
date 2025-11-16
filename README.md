@@ -89,7 +89,7 @@ A sample markdown file (`SAMPLE.md`) is included in the project root. You can up
 
 ## License
 
-MIT
+Unlicense - This is free and unencumbered software released into the public domain. Do whatever you want with it!
 
 ## Contributing
 

@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "Unlicense",
   "dependencies": {
     "lucide-react": "^0.553.0",
     "react": "^19.2.0",
